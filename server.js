@@ -14,11 +14,11 @@ app.get('/locations/*',function(req,res){
 		"temperature":"",
 		"scale":"Fahrenheit"
 	};
-	str = path.basename(req.originalUrl).substr(0,5);
+	var str = path.basename(req.originalUrl).substr(0,5);
+	var string = "select * from weather.forecast where woeid in (select woeid from geo.places(1) where placetype='Zip' AND text='" + str + "')";
+	var query = new YQL(string);
 	if((path.basename(req.originalUrl).indexOf("Celsius") > -1 )|| (path.basename(req.originalUrl).indexOf("celsius") > -1)){
-		list["scale"]= "Celsius";	
-		var string = "select * from weather.forecast where woeid in (select woeid from geo.places(1) where placetype='Zip' AND text='" + str + "')";
-		var query = new YQL(string);
+		list["scale"]= "Celsius";
 		query.exec(function(err, data) {
 			var condition = data.query.results.channel.item.condition;
 			list["temperature"]= Number((condition.temp - 32)/1.8).toFixed(0);
@@ -26,8 +26,6 @@ app.get('/locations/*',function(req,res){
 		});
 	}
 	else{
-		var string = "select * from weather.forecast where woeid in (select woeid from geo.places(1) where placetype='Zip' AND text='" + str + "')";
-		var query = new YQL(string);
 		query.exec(function(err, data) {
 			var condition = data.query.results.channel.item.condition;
 			list["temperature"]= condition.temp;
