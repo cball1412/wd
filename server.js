@@ -32,6 +32,7 @@ app.get('/locations/*',function(req,res){
 			res.json(list);
 		});
 	}
+	return 200;
 });
 
 http.listen(8080,function(){
